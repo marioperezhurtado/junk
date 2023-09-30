@@ -4,6 +4,7 @@ const isEvent = (k, v) => k.startsWith('on') && typeof v === 'function';
 const eventName = (k) => k.toLowerCase().substr(2);
 const isFunction = (tag) => typeof tag === 'function';
 const isTextNode = (child) => typeof child === 'string' || typeof child === 'number';
+const isSomething = (child) => typeof child !== 'undefined' && child !== null && child !== false;
 
 export function createElement(tag, props, ...children) {
   // Custom component
@@ -19,14 +20,35 @@ export function createElement(tag, props, ...children) {
     const node = isTextNode(child) ? document.createTextNode(child) : child;
 
     if (typeof child === 'function') {
-      // TODO: do not override all element lol
-      createEffect(() => element.textContent = child());
+      createEffect(() => createExpression(element, child));
     } else {
       if (node) element.appendChild(node);
     }
   });
 
   return element;
+}
+
+function createExpression(element, expression) {
+  const result = expression();
+
+  if (isSomething(result)) {
+    if (isTextNode(result)) {
+      element.innerHTML = result;
+    } else {
+      element.innerHTML = '';
+
+      if (Array.isArray(result)) {
+        const fragment = document.createDocumentFragment();
+        result.forEach((child) => fragment.appendChild(child));
+        element.appendChild(fragment);
+      } else {
+        element.appendChild(result);
+      }
+    }
+  } else {
+    element.innerHTML = '';
+  }
 }
 
 function addAttributes(element, props) {

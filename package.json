@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "babel index.js -d dist"
+    "build": "babel index.jsx -d dist"
   },
   "author": "",
   "license": "ISC",
