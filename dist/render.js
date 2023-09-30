@@ -31,7 +31,6 @@ export function createElement(tag, props, ...children) {
 
 function createExpression(element, expression) {
   const result = expression();
-
   if (isSomething(result)) {
     if (isTextNode(result)) {
       element.innerHTML = result;
@@ -71,8 +70,17 @@ function addAttributes(element, props) {
   return element;
 }
 
-export function render(element) {
-  document.getElementById('app').appendChild(element);
+export function Fragment(props) {
+  return props.children;
+}
+
+export function render(rootElement) {
+  if (Array.isArray(rootElement)) {
+    const fragment = document.createDocumentFragment();
+    rootElement.forEach((child) => fragment.appendChild(child));
+    rootElement = fragment;
+  }
+  document.getElementById('root').appendChild(rootElement);
 }
 
 export * as Junk from "./render.js";

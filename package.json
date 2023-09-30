@@ -19,7 +19,8 @@
       [
         "@babel/plugin-transform-react-jsx",
         {
-          "pragma": "Junk.createElement"
+          "pragma": "Junk.createElement",
+          "pragmaFrag": "Junk.Fragment"
         }
       ]
     ]

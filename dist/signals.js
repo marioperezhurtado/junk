@@ -1,28 +1,29 @@
-var context = [];
+const context = [];
+
 function getCurrentObserver() {
   return context[context.length - 1];
 }
+
 export function createSignal(value) {
-  var subscribers = new Set();
-  var read = function() {
-    var current = getCurrentObserver();
-    if (current)
-      subscribers.add(current);
+  const subscribers = new Set();
+  const read = () => {
+    const current = getCurrentObserver();
+    if (current) subscribers.add(current);
     return value;
   };
-  var write = function(newValue) {
+  const write = (newValue) => {
     value = newValue;
-    subscribers.forEach(function(sub) { return sub(); });
+    subscribers.forEach((sub) => sub());
   };
   return [read, write];
 }
+
 export function createEffect(fn) {
-  var execute = function() {
+  const execute = () => {
     context.push(execute);
     try {
       fn();
-    }
-    finally {
+    } finally {
       context.pop();
     }
   };
