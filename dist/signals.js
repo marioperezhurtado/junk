@@ -6,6 +6,7 @@ function getCurrentObserver() {
 
 export function createSignal(value) {
   const subscribers = new Set();
+
   const read = () => {
     const current = getCurrentObserver();
     if (current) subscribers.add(current);
@@ -15,14 +16,15 @@ export function createSignal(value) {
     value = newValue;
     subscribers.forEach((sub) => sub());
   };
+
   return [read, write];
 }
 
-export function createEffect(fn) {
+export function createEffect(callback) {
   const execute = () => {
     context.push(execute);
     try {
-      fn();
+      callback();
     } finally {
       context.pop();
     }

@@ -9,6 +9,7 @@ function Counter(props) {
   return (
     <section>
       <h1>Count is: <span>{count}</span></h1>
+      <p>{() => count() > 5 ? "Greather than 5" : "Less or equal to 5"}</p>
       <Double count={count} />
       <button onClick={() => setCount(count() - 1)}>-</button>
       <button onClick={() => setCount(count() + 1)}>+</button>
@@ -22,53 +23,11 @@ function Double(props) {
   return <h2>Double is: <span>{double}</span></h2>;
 }
 
-function Todos() {
-  const [todos, setTodos] = createSignal(["Foo", "Bar", "Baz"]);
-
-  function removeTodo(todo) {
-    setTodos(todos().filter((t) => t !== todo));
-  }
-
-  return (
-    <section>
-      <ul>
-        {() => todos().map((todo) =>
-          <li>
-            {todo}
-            <button onClick={() => removeTodo(todo)}>Eliminar</button>
-          </li>
-        )}
-      </ul>
-      <AddTodo onAddTodo={(todo) => setTodos([...todos(), todo])} />
-    </section>
-  );
-}
-
-function AddTodo(props) {
-  const [input, setInput] = createSignal("");
-
-  function addTodo(e) {
-    e.preventDefault();
-    if (!input()) return;
-    props.onAddTodo(input());
-    setInput("");
-    e.target.reset();
-  }
-
-  return (
-    <form onSubmit={addTodo}>
-      <input type="text" onInput={(e) => setInput(e.target.value)} />
-      <button type="submit">Add Todo</button>
-    </form>
-  );
-}
-
 function App() {
   return (
     <>
-      <h1>Hello World from Junk!</h1>
+      <h1>Hello World!</h1>
       <Counter start={0} />
-      <Todos />
     </>
   );
 }

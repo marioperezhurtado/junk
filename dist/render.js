@@ -4,7 +4,7 @@ const isEvent = (k, v) => k.startsWith('on') && typeof v === 'function';
 const eventName = (k) => k.toLowerCase().substr(2);
 const isFunction = (tag) => typeof tag === 'function';
 const isTextNode = (child) => typeof child === 'string' || typeof child === 'number';
-const isSomething = (child) => typeof child !== 'undefined' && child !== null && child !== false;
+const isEmpty = (child) => typeof child === 'undefined' || child === null || child === false;
 
 export function createElement(tag, props, ...children) {
   // Custom component
@@ -29,25 +29,21 @@ export function createElement(tag, props, ...children) {
   return element;
 }
 
+// Create expression
 function createExpression(element, expression) {
   const result = expression();
-  if (isSomething(result)) {
-    if (isTextNode(result)) {
-      element.innerHTML = result;
-    } else {
-      element.innerHTML = '';
-
-      if (Array.isArray(result)) {
-        const fragment = document.createDocumentFragment();
-        result.forEach((child) => fragment.appendChild(child));
-        element.appendChild(fragment);
-      } else {
-        element.appendChild(result);
-      }
-    }
-  } else {
+  if (isEmpty(result)) {
     element.innerHTML = '';
+    return;
   }
+
+  if (isTextNode(result)) {
+      element.textContent = result;
+      return;
+  }
+    
+  element.innerHTML = '';
+  element.appendChild(result);
 }
 
 function addAttributes(element, props) {
@@ -61,7 +57,7 @@ function addAttributes(element, props) {
     else if (k === 'className') {
       const classes = Array.isArray(v) ? v : [v];
       classes.forEach((c) => element.classList.add(c));
-    } // Add attribute
+    } // Add other attribute
     else {
       element.setAttribute(k, v);
     }
@@ -71,15 +67,16 @@ function addAttributes(element, props) {
 }
 
 export function Fragment(props) {
+  if (Array.isArray(props.children)) {
+    const fragment = document.createDocumentFragment();
+    props.children.forEach((child) => fragment.appendChild(child));
+    return fragment;
+  }
+
   return props.children;
 }
 
 export function render(rootElement) {
-  if (Array.isArray(rootElement)) {
-    const fragment = document.createDocumentFragment();
-    rootElement.forEach((child) => fragment.appendChild(child));
-    rootElement = fragment;
-  }
   document.getElementById('root').appendChild(rootElement);
 }
 
